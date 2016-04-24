@@ -45,23 +45,6 @@ const uint8_t port_mapping[] =
     PM_TA0CCR1A, PM_TA0CCR2A, PM_TA0CCR3A, PM_NONE, PM_TA1CCR1A, PM_NONE, PM_NONE, PM_NONE
 };
 
-/* TimerA UpMode Configuration Parameter */
-const Timer_A_UpModeConfig upConfig =
-{
-        TIMER_A_CLOCKSOURCE_SMCLK,              // SMCLK Clock Source
-        TIMER_A_CLOCKSOURCE_DIVIDER_8,          // SMCLK/8 = 6MHz
-        90000,                                  // 15ms debounce period
-        TIMER_A_TAIE_INTERRUPT_DISABLE,         // Disable Timer interrupt
-        TIMER_A_CCIE_CCR0_INTERRUPT_ENABLE ,    // Enable CCR0 interrupt
-        TIMER_A_DO_CLEAR                        // Clear value
-};
-
-/*
- * GLOBAL VARIABLES -- End
- */
-
-
-
 /*!
     \brief Opening a client side socket and sending data
 
@@ -191,102 +174,13 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
  */
 int main(int argc, char** argv)
 {
-    _i32 retVal = -1;
 
-    retVal = initializeAppVariables();
-    ASSERT_ON_ERROR(retVal);
-
-    /* Stop WDT and initialize the system-clock of the MCU */
-    stopWDT();
-    initClk();
-
-    /* GPIO Setup for Pins 2.0-2.2 */
-    MAP_PMAP_configurePorts((const uint8_t *) port_mapping, P2MAP, 1,
-        PMAP_DISABLE_RECONFIGURATION);
-
-    MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2,
-        GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
-
-    /* Confinguring P1.1 & P1.4 as an input and enabling interrupts */
-    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_interruptEdgeSelect(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4, GPIO_HIGH_TO_LOW_TRANSITION);
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-
-    GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-
-    /* Configure TimerA0 for RGB LED*/
-    TA0CCR0 = PWM_PERIOD;                   // PWM Period
-    TA0CCTL1 = OUTMOD_7;                    // CCR1 reset/set
-    TA0CCR1 = PWM_PERIOD * (0/255);                 // CCR1 PWM duty cycle
-    TA0CCTL2 = OUTMOD_7;                    // CCR2 reset/set
-    TA0CCR2 = PWM_PERIOD * (0/255);                 // CCR2 PWM duty cycle
-    TA0CCTL3 = OUTMOD_7;                    // CCR3 reset/set
-    TA0CCR3 = PWM_PERIOD * (0/255);                 // CCR3 PWM duty cycle
-    TA0CTL = TASSEL__SMCLK | MC__UP | TACLR;  // SMCLK, up mode, clear TAR
-
-    /* Configuring TimerA1 for Up Mode */
-    Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
-
-    Interrupt_enableInterrupt(INT_TA1_0);
-    Interrupt_enableInterrupt(INT_PORT1);
-    Interrupt_enableMaster();
-
-    /* Configure command line interface */
-    CLI_Configure();
-
-    /*
-     * Following function configures the device to default state by cleaning
-     * the persistent settings stored in NVMEM (viz. connection profiles &
-     * policies, power policy etc)
-     *
-     * Applications may choose to skip this step if the developer is sure
-     * that the device is in its default state at start of application
-     *
-     * Note that all profiles and persistent settings that were done on the
-     * device will be lost
-     */
-    retVal = configureSimpleLinkToDefaultState();
-    if(retVal < 0)
-    {
-        if (DEVICE_NOT_IN_STATION_MODE == retVal)
-            CLI_Write(" Failed to configure the device in its default state \n\r");
-
-        LOOP_FOREVER();
-    }
-
-    CLI_Write(" Device is configured in default state \n\r");
-
-    /*
-     * Assumption is that the device is configured in station mode already
-     * and it is in its default state
-     */
-    retVal = sl_Start(0, 0, 0);
-    if ((retVal < 0) ||
-        (ROLE_STA != retVal) )
-    {
-        CLI_Write(" Failed to start the device \n\r");
-        LOOP_FOREVER();
-    }
-
-    CLI_Write(" Device started as STATION \n\r");
-
-    /* Connecting to WLAN AP */
-    retVal = establishConnectionWithAP();
-    if(retVal < 0)
-    {
-        CLI_Write(" Failed to establish connection w/ an AP \n\r");
-        LOOP_FOREVER();
-    }
-
-    CLI_Write(" Connection established w/ AP and IP is acquired \n\r");
-
+    init_main();
 
     while(1){
 
-        retVal = BsdTcpClient(PORT_NUM);
+        //retVal = BsdTcpClient(PORT_NUM);
+        BsdTcpClient(PORT_NUM);
         Delay(10);
     }
 }

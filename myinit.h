@@ -16,5 +16,6 @@
 _i32 establishConnectionWithAP();
 _i32 configureSimpleLinkToDefaultState();
 _i32 initializeAppVariables();
+int init_main();
 
 #endif /* MYINIT_H_ */
