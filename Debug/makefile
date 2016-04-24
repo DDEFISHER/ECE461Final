@@ -24,10 +24,12 @@ ORDERED_OBJS += \
 "./cli_uart.obj" \
 "./device.obj" \
 "./driver.obj" \
+"./events.obj" \
 "./flowcont.obj" \
 "./fs.obj" \
 "./main.obj" \
 "./msp432_startup_ccs.obj" \
+"./myinit.obj" \
 "./netapp.obj" \
 "./netcfg.obj" \
 "./nonos.obj" \
@@ -175,8 +177,8 @@ final_ece461.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)$(BIN_OUTPUTS__QUOTED)
-	-$(RM) "MQTTCC3100.pp" "MQTTClient.pp" "MQTTConnectClient.pp" "MQTTConnectServer.pp" "MQTTDeserializePublish.pp" "MQTTFormat.pp" "MQTTPacket.pp" "MQTTSerializePublish.pp" "MQTTSubscribeClient.pp" "MQTTSubscribeServer.pp" "MQTTUnsubscribeClient.pp" "MQTTUnsubscribeServer.pp" "board.pp" "cli_uart.pp" "device.pp" "driver.pp" "flowcont.pp" "fs.pp" "main.pp" "msp432_startup_ccs.pp" "netapp.pp" "netcfg.pp" "nonos.pp" "socket.pp" "spawn.pp" "spi_cc3100.pp" "uart_cc3100.pp" "wlan.pp" 
-	-$(RM) "MQTTCC3100.obj" "MQTTClient.obj" "MQTTConnectClient.obj" "MQTTConnectServer.obj" "MQTTDeserializePublish.obj" "MQTTFormat.obj" "MQTTPacket.obj" "MQTTSerializePublish.obj" "MQTTSubscribeClient.obj" "MQTTSubscribeServer.obj" "MQTTUnsubscribeClient.obj" "MQTTUnsubscribeServer.obj" "board.obj" "cli_uart.obj" "device.obj" "driver.obj" "flowcont.obj" "fs.obj" "main.obj" "msp432_startup_ccs.obj" "netapp.obj" "netcfg.obj" "nonos.obj" "socket.obj" "spawn.obj" "spi_cc3100.obj" "uart_cc3100.obj" "wlan.obj" 
+	-$(RM) "MQTTCC3100.pp" "MQTTClient.pp" "MQTTConnectClient.pp" "MQTTConnectServer.pp" "MQTTDeserializePublish.pp" "MQTTFormat.pp" "MQTTPacket.pp" "MQTTSerializePublish.pp" "MQTTSubscribeClient.pp" "MQTTSubscribeServer.pp" "MQTTUnsubscribeClient.pp" "MQTTUnsubscribeServer.pp" "board.pp" "cli_uart.pp" "device.pp" "driver.pp" "events.pp" "flowcont.pp" "fs.pp" "main.pp" "msp432_startup_ccs.pp" "myinit.pp" "netapp.pp" "netcfg.pp" "nonos.pp" "socket.pp" "spawn.pp" "spi_cc3100.pp" "uart_cc3100.pp" "wlan.pp" 
+	-$(RM) "MQTTCC3100.obj" "MQTTClient.obj" "MQTTConnectClient.obj" "MQTTConnectServer.obj" "MQTTDeserializePublish.obj" "MQTTFormat.obj" "MQTTPacket.obj" "MQTTSerializePublish.obj" "MQTTSubscribeClient.obj" "MQTTSubscribeServer.obj" "MQTTUnsubscribeClient.obj" "MQTTUnsubscribeServer.obj" "board.obj" "cli_uart.obj" "device.obj" "driver.obj" "events.obj" "flowcont.obj" "fs.obj" "main.obj" "msp432_startup_ccs.obj" "myinit.obj" "netapp.obj" "netcfg.obj" "nonos.obj" "socket.obj" "spawn.obj" "spi_cc3100.obj" "uart_cc3100.obj" "wlan.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -1,6 +1,8 @@
 # FIXED
 
 main.obj: ../main.c
+main.obj: ../defines.h
+main.obj: ../passkey.h
 main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdlib.h
 main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/linkage.h
 main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/string.h
@@ -66,10 +68,12 @@ main.obj: ../device.h
 main.obj: ../netcfg.h
 main.obj: ../wlan_rx_filters.h
 main.obj: ../sl_common.h
-main.obj: ../defines.h
-main.obj: ../passkey.h
+main.obj: ../events.h
+main.obj: ../myinit.h
 
 ../main.c: 
+../defines.h: 
+../passkey.h: 
 /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdlib.h: 
 /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/linkage.h: 
 /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/string.h: 
@@ -135,5 +139,5 @@ main.obj: ../passkey.h
 ../netcfg.h: 
 ../wlan_rx_filters.h: 
 ../sl_common.h: 
-../defines.h: 
-../passkey.h: 
+../events.h: 
+../myinit.h: 

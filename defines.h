@@ -9,6 +9,12 @@
 #define DEFINES_H_
 
 #include "passkey.h"
+#include <stdlib.h>
+#include <string.h>
+
+#include "driverlib.h"
+#include "simplelink.h"
+#include "sl_common.h"
 
 #define APPLICATION_VERSION "1.0.0"
 
