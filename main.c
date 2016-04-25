@@ -47,9 +47,9 @@ const uint8_t port_mapping[] =
     PM_TA0CCR1A, PM_TA0CCR2A, PM_TA0CCR3A, PM_NONE, PM_TA1CCR1A, PM_NONE, PM_NONE, PM_NONE
 };
 //stuff for mqtt
-#define MQTT_BROKER_SERVER  "127.0.0.1"
-#define SUBSCRIBE_TOPIC "/goal"
-#define PUBLISH_TOPIC "/step"
+#define MQTT_BROKER_SERVER  "192.168.1.88"
+#define SUBSCRIBE_TOPIC "goal"
+#define PUBLISH_TOPIC "step"
 
 // MQTT message buffer size
 #define BUFF_SIZE 32
@@ -58,8 +58,8 @@ const uint8_t port_mapping[] =
 #define APPLICATION_VERSION "1.0.0"
 char uniqueID[9] = "cowcowcow";
 
-void mqtt();
-static void messageArrived(MessageData* data);
+void mqtt_subscribe();
+void messageArrived(MessageData* data);
 
 Network n;
 Client hMQTTClient;     // MQTT Client
@@ -197,11 +197,11 @@ int main(int argc, char** argv)
 
     init_main();
 
+    mqtt_subscribe();
     while(1){
 
         //retVal = BsdTcpClient(PORT_NUM);
         //BsdTcpClient(PORT_NUM);
-        mqtt();
         Delay(10);
     }
 }
@@ -257,8 +257,7 @@ void TA1_0_IRQHandler(void)
                 TIMER_A_CAPTURECOMPARE_REGISTER_0);
 }
 
-
-void mqtt() {
+void mqtt_subscribe() {
 
     int rc = 0;
     unsigned char buf[100];
@@ -275,29 +274,29 @@ void mqtt() {
 
     MQTTClient(&hMQTTClient, &n, 1000, buf, 100, readbuf, 100);
     MQTTPacket_connectData cdata = MQTTPacket_connectData_initializer;
-    cdata.MQTTVersion = 4;
+    cdata.MQTTVersion = 3;
     cdata.clientID.cstring = uniqueID;
     rc = MQTTConnect(&hMQTTClient, &cdata);
 
     if (rc != 0) {
         CLI_Write(" Failed to start MQTT client \n\r");
-        LOOP_FOREVER();
+        //LOOP_FOREVER();
     }
     CLI_Write(" Started MQTT client successfully \n\r");
 
-    rc = MQTTSubscribe(&hMQTTClient, SUBSCRIBE_TOPIC, QOS0, messageArrived);
+    rc = MQTTSubscribe(&hMQTTClient, "test", QOS0, messageArrived);
 
     if (rc != 0) {
         CLI_Write(" Failed to subscribe to /msp/cc3100/demo topic \n\r");
-        LOOP_FOREVER();
+        //LOOP_FOREVER();
     }
     CLI_Write(" Subscribed to /msp/cc3100/demo topic \n\r");
 
-    rc = MQTTSubscribe(&hMQTTClient, SUBSCRIBE_TOPIC, QOS0, messageArrived);
+    rc = MQTTSubscribe(&hMQTTClient, "goal", QOS0, messageArrived);
 
     if (rc != 0) {
         CLI_Write(" Failed to subscribe to uniqueID topic \n\r");
-        LOOP_FOREVER();
+        //LOOP_FOREVER();
     }
     CLI_Write(" Subscribed to uniqueID topic \n\r");
 
@@ -305,7 +304,7 @@ void mqtt() {
         rc = MQTTYield(&hMQTTClient, 10);
         if (rc != 0) {
             CLI_Write(" MQTT failed to yield \n\r");
-            LOOP_FOREVER();
+            //LOOP_FOREVER();
         }
 
         if (publishID) {
@@ -321,11 +320,11 @@ void mqtt() {
 
             if (rc != 0) {
                 CLI_Write(" Failed to publish unique ID to MQTT broker \n\r");
-                LOOP_FOREVER();
+                //LOOP_FOREVER();
             }
             CLI_Write(" Published unique ID successfully \n\r");
 
-            publishID = 0;
+            publishID = 1;
         }
 
         Delay(10);
@@ -341,7 +340,7 @@ void mqtt() {
 //! \return                        None
 //
 //****************************************************************************
-static void messageArrived(MessageData* data) {
+void messageArrived(MessageData* data) {
     char buf[BUFF_SIZE];
 
     char *tok;
