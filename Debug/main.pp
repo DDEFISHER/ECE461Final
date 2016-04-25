@@ -70,6 +70,19 @@ main.obj: ../wlan_rx_filters.h
 main.obj: ../sl_common.h
 main.obj: ../events.h
 main.obj: ../myinit.h
+main.obj: ../MQTTClient.h
+main.obj: ../MQTTPacket.h
+main.obj: ../MQTTConnect.h
+main.obj: ../MQTTPublish.h
+main.obj: ../MQTTSubscribe.h
+main.obj: ../MQTTUnsubscribe.h
+main.obj: ../MQTTFormat.h
+main.obj: ../StackTrace.h
+main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
+main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h
+main.obj: ../MQTTPacket.h
+main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
+main.obj: ../MQTTCC3100.h
 
 ../main.c: 
 ../defines.h: 
@@ -141,3 +154,16 @@ main.obj: ../myinit.h
 ../sl_common.h: 
 ../events.h: 
 ../myinit.h: 
+../MQTTClient.h: 
+../MQTTPacket.h: 
+../MQTTConnect.h: 
+../MQTTPublish.h: 
+../MQTTSubscribe.h: 
+../MQTTUnsubscribe.h: 
+../MQTTFormat.h: 
+../StackTrace.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h: 
+../MQTTPacket.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 
+../MQTTCC3100.h: 

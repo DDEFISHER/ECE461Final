@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "events.h"
 #include "myinit.h"
+#include "MQTTClient.h"
+
 
 /*
  * Values for below macros shall be modified per the access-point's (AP) properties
@@ -31,7 +33,7 @@ union
 /* Button debounce state variables */
 volatile unsigned int S1buttonDebounce = 0;
 volatile unsigned int S2buttonDebounce = 0;
-volatile int publishID = 0;
+volatile int publishID = 1;
 
 unsigned char macAddressVal[SL_MAC_ADDR_LEN];
 unsigned char macAddressLen = SL_MAC_ADDR_LEN;
@@ -44,6 +46,24 @@ const uint8_t port_mapping[] =
     //Port P2:
     PM_TA0CCR1A, PM_TA0CCR2A, PM_TA0CCR3A, PM_NONE, PM_TA1CCR1A, PM_NONE, PM_NONE, PM_NONE
 };
+//stuff for mqtt
+#define MQTT_BROKER_SERVER  "127.0.0.1"
+#define SUBSCRIBE_TOPIC "/goal"
+#define PUBLISH_TOPIC "/step"
+
+// MQTT message buffer size
+#define BUFF_SIZE 32
+
+
+#define APPLICATION_VERSION "1.0.0"
+char uniqueID[9] = "cowcowcow";
+
+void mqtt();
+static void messageArrived(MessageData* data);
+
+Network n;
+Client hMQTTClient;     // MQTT Client
+
 
 /*!
     \brief Opening a client side socket and sending data
@@ -180,7 +200,8 @@ int main(int argc, char** argv)
     while(1){
 
         //retVal = BsdTcpClient(PORT_NUM);
-        BsdTcpClient(PORT_NUM);
+        //BsdTcpClient(PORT_NUM);
+        mqtt();
         Delay(10);
     }
 }
@@ -237,4 +258,125 @@ void TA1_0_IRQHandler(void)
 }
 
 
+void mqtt() {
+
+    int rc = 0;
+    unsigned char buf[100];
+    unsigned char readbuf[100];
+
+    NewNetwork(&n);
+    rc = ConnectNetwork(&n, MQTT_BROKER_SERVER, 1883);
+
+    if (rc != 0) {
+        CLI_Write(" Failed to connect to MQTT broker \n\r");
+        LOOP_FOREVER();
+    }
+    CLI_Write(" Connected to MQTT broker \n\r");
+
+    MQTTClient(&hMQTTClient, &n, 1000, buf, 100, readbuf, 100);
+    MQTTPacket_connectData cdata = MQTTPacket_connectData_initializer;
+    cdata.MQTTVersion = 4;
+    cdata.clientID.cstring = uniqueID;
+    rc = MQTTConnect(&hMQTTClient, &cdata);
+
+    if (rc != 0) {
+        CLI_Write(" Failed to start MQTT client \n\r");
+        LOOP_FOREVER();
+    }
+    CLI_Write(" Started MQTT client successfully \n\r");
+
+    rc = MQTTSubscribe(&hMQTTClient, SUBSCRIBE_TOPIC, QOS0, messageArrived);
+
+    if (rc != 0) {
+        CLI_Write(" Failed to subscribe to /msp/cc3100/demo topic \n\r");
+        LOOP_FOREVER();
+    }
+    CLI_Write(" Subscribed to /msp/cc3100/demo topic \n\r");
+
+    rc = MQTTSubscribe(&hMQTTClient, SUBSCRIBE_TOPIC, QOS0, messageArrived);
+
+    if (rc != 0) {
+        CLI_Write(" Failed to subscribe to uniqueID topic \n\r");
+        LOOP_FOREVER();
+    }
+    CLI_Write(" Subscribed to uniqueID topic \n\r");
+
+    while(1){
+        rc = MQTTYield(&hMQTTClient, 10);
+        if (rc != 0) {
+            CLI_Write(" MQTT failed to yield \n\r");
+            LOOP_FOREVER();
+        }
+
+        if (publishID) {
+            int rc = 0;
+            MQTTMessage msg;
+            msg.dup = 0;
+            msg.id = 0;
+            msg.payload = uniqueID;
+            msg.payloadlen = 8;
+            msg.qos = QOS0;
+            msg.retained = 0;
+            rc = MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
+
+            if (rc != 0) {
+                CLI_Write(" Failed to publish unique ID to MQTT broker \n\r");
+                LOOP_FOREVER();
+            }
+            CLI_Write(" Published unique ID successfully \n\r");
+
+            publishID = 0;
+        }
+
+        Delay(10);
+    }
+
+}
+//****************************************************************************
+//
+//!    \brief MQTT message received callback - Called when a subscribed topic
+//!                                            receives a message.
+//! \param[in]                  data is the data passed to the callback
+//!
+//! \return                        None
+//
+//****************************************************************************
+static void messageArrived(MessageData* data) {
+    char buf[BUFF_SIZE];
+
+    char *tok;
+    long color;
+
+    // Check for buffer overflow
+    if (data->topicName->lenstring.len >= BUFF_SIZE) {
+//      UART_PRINT("Topic name too long!\n\r");
+        return;
+    }
+    if (data->message->payloadlen >= BUFF_SIZE) {
+//      UART_PRINT("Payload too long!\n\r");
+        return;
+    }
+
+    strncpy(buf, data->topicName->lenstring.data,
+        min(BUFF_SIZE, data->topicName->lenstring.len));
+    buf[data->topicName->lenstring.len] = 0;
+
+
+
+    strncpy(buf, data->message->payload,
+        min(BUFF_SIZE, data->message->payloadlen));
+    buf[data->message->payloadlen] = 0;
+
+    tok = strtok(buf, " ");
+    color = strtol(tok, NULL, 10);
+    TA0CCR1 = PWM_PERIOD * (color/255.0);                 // CCR1 PWM duty cycle
+    tok = strtok(NULL, " ");
+    color = strtol(tok, NULL, 10);
+    TA0CCR2 = PWM_PERIOD * (color/255.0);                // CCR2 PWM duty cycle
+    tok = strtok(NULL, " ");
+    color = strtol(tok, NULL, 10);
+    TA0CCR3 = PWM_PERIOD * (color/255.0);                  // CCR3 PWM duty cycle
+
+    return;
+}
 

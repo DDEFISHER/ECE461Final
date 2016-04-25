@@ -31,6 +31,7 @@ C_SRCS += \
 ../fs.c \
 ../main.c \
 ../msp432_startup_ccs.c \
+../my_mqtt.c \
 ../myinit.c \
 ../netapp.c \
 ../netcfg.c \
@@ -63,6 +64,7 @@ OBJS += \
 ./fs.obj \
 ./main.obj \
 ./msp432_startup_ccs.obj \
+./my_mqtt.obj \
 ./myinit.obj \
 ./netapp.obj \
 ./netcfg.obj \
@@ -95,6 +97,7 @@ C_DEPS += \
 ./fs.pp \
 ./main.pp \
 ./msp432_startup_ccs.pp \
+./my_mqtt.pp \
 ./myinit.pp \
 ./netapp.pp \
 ./netcfg.pp \
@@ -127,6 +130,7 @@ C_DEPS__QUOTED += \
 "fs.pp" \
 "main.pp" \
 "msp432_startup_ccs.pp" \
+"my_mqtt.pp" \
 "myinit.pp" \
 "netapp.pp" \
 "netcfg.pp" \
@@ -159,6 +163,7 @@ OBJS__QUOTED += \
 "fs.obj" \
 "main.obj" \
 "msp432_startup_ccs.obj" \
+"my_mqtt.obj" \
 "myinit.obj" \
 "netapp.obj" \
 "netcfg.obj" \
@@ -191,6 +196,7 @@ C_SRCS__QUOTED += \
 "../fs.c" \
 "../main.c" \
 "../msp432_startup_ccs.c" \
+"../my_mqtt.c" \
 "../myinit.c" \
 "../netapp.c" \
 "../netcfg.c" \
