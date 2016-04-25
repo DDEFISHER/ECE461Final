@@ -60,6 +60,7 @@ char uniqueID[9] = "cowcowcow";
 
 void mqtt_subscribe();
 void messageArrived(MessageData* data);
+void send_steps();
 
 Network n;
 Client hMQTTClient;     // MQTT Client
@@ -200,6 +201,7 @@ int main(int argc, char** argv)
     mqtt_subscribe();
     while(1){
 
+        //send_steps();
         //retVal = BsdTcpClient(PORT_NUM);
         //BsdTcpClient(PORT_NUM);
         Delay(10);
@@ -300,7 +302,7 @@ void mqtt_subscribe() {
     }
     CLI_Write(" Subscribed to uniqueID topic \n\r");
 
-    while(1){
+    while(1) {
         rc = MQTTYield(&hMQTTClient, 10);
         if (rc != 0) {
             CLI_Write(" MQTT failed to yield \n\r");
@@ -328,8 +330,40 @@ void mqtt_subscribe() {
         }
 
         Delay(10);
-    }
+   }
 
+}
+void send_steps() {
+    //while(1){
+        int rc = MQTTYield(&hMQTTClient, 10);
+        if (rc != 0) {
+            CLI_Write(" MQTT failed to yield \n\r");
+            //LOOP_FOREVER();
+        }
+
+        publishID = 1;
+        if (publishID) {
+            int rc = 0;
+            MQTTMessage msg;
+            msg.dup = 0;
+            msg.id = 0;
+            msg.payload = "step123";
+            msg.payloadlen = 8;
+            msg.qos = QOS0;
+            msg.retained = 0;
+            rc = MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
+
+            if (rc != 0) {
+                CLI_Write(" Failed to publish unique ID to MQTT broker \n\r");
+                //LOOP_FOREVER();
+            }
+            CLI_Write(" Published unique ID successfully \n\r");
+
+            publishID = 0;
+        }
+
+        Delay(10);
+   // }
 }
 //****************************************************************************
 //
