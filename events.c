@@ -128,6 +128,52 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pHttpEvent,
 }
 
 /*!
+    \brief This function handles socket events indication
+
+    \param[in]      pSock is the event passed to the handler
+
+    \return         None
+*/
+void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
+{
+    if(pSock == NULL)
+        CLI_Write(" [SOCK EVENT] NULL Pointer Error \n\r");
+
+    switch( pSock->Event )
+    {
+        case SL_SOCKET_TX_FAILED_EVENT:
+        {
+            /*
+            * TX Failed
+            *
+            * Information about the socket descriptor and status will be
+            * available in 'SlSockEventData_t' - Applications can use it if
+            * required
+            *
+            * SlSockEventData_t *pEventData = NULL;
+            * pEventData = & pSock->EventData;
+            */
+            switch( pSock->EventData.status )
+            {
+                case SL_ECLOSE:
+                    CLI_Write(" [SOCK EVENT] Close socket operation failed to transmit all queued packets\n\r");
+                break;
+
+
+                default:
+                    CLI_Write(" [SOCK EVENT] Unexpected event \n\r");
+                break;
+            }
+        }
+        break;
+
+        default:
+            CLI_Write(" [SOCK EVENT] Unexpected event \n\r");
+        break;
+    }
+}
+
+/*!
     \brief This function handles general error events indication
 
     \param[in]      pDevEvent is the event passed to the handler
