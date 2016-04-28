@@ -84,8 +84,9 @@ int main(int argc, char** argv)
     init_clocks(); //init clock for LCD
     init_lcd();
     initClk(); //init clock for wifi
+    Delay(10);
     init_main();
-    //EUSCI_B_SPI_disable(EUSCI_B0_BASE);
+    Delay(10);
 
     int rc = 0;
     unsigned char buf[100];
@@ -97,7 +98,6 @@ int main(int argc, char** argv)
     if (rc != 0) {
         CLI_Write(" Failed to connect to MQTT broker \n\r");
     }
-    CLI_Write(" Connected to MQTT broker \n\r");
 
     MQTTClient(&hMQTTClient, &n, 1000, buf, 100, readbuf, 100);
     MQTTPacket_connectData cdata = MQTTPacket_connectData_initializer;
@@ -109,7 +109,6 @@ int main(int argc, char** argv)
         CLI_Write(" Failed to start MQTT client \n\r");
         //LOOP_FOREVER();
     }
-    CLI_Write(" Started MQTT client successfully \n\r");
 
     rc = MQTTSubscribe(&hMQTTClient, "test", QOS0, messageArrived);
 
@@ -117,15 +116,6 @@ int main(int argc, char** argv)
         CLI_Write(" Failed to subscribe to /msp/cc3100/demo topic \n\r");
         //LOOP_FOREVER();
     }
-    CLI_Write(" Subscribed to /msp/cc3100/demo topic \n\r");
-
-    rc = MQTTSubscribe(&hMQTTClient, "goal", QOS0, messageArrived);
-
-    if (rc != 0) {
-        CLI_Write(" Failed to subscribe to uniqueID topic \n\r");
-        //LOOP_FOREVER();
-    }
-    CLI_Write(" Subscribed to uniqueID topic \n\r");
 
     while(1) {
         //TODO add real expression here
@@ -298,3 +288,29 @@ void messageArrived(MessageData* data) {
     return;
 }
 
+void ADC14_IRQHandler(void)
+{
+  uint64_t status;
+
+    //AdcObj adc_message;
+    //adc_message.x = 0;
+    //adc_message.y = 0;
+    //adc_message.z = 0;
+
+    MAP_Interrupt_disableInterrupt(INT_ADC14);
+    status = MAP_ADC14_getEnabledInterruptStatus();
+    MAP_ADC14_clearInterruptFlag(status);
+
+    /* ADC_MEM2 conversion completed */
+    if(status & ((uint32_t)0x00000004))
+    {
+        /* Store ADC14 conversion results */
+        //adc_message.x = ADC14_getResult(ADC_MEM0);
+        //adc_message.y = ADC14_getResult(ADC_MEM1);
+        //adc_message.z = ADC14_getResult(ADC_MEM2);
+
+        //Mailbox_post(ADC_Mbx, &adc_message, BIOS_WAIT_FOREVER);
+        P1OUT ^= BIT1;
+
+    }
+}

@@ -60,6 +60,9 @@ extern void PORT2_IRQHandler(void);
 extern void EUSCIA0_IRQHandler(void);
 /* To be added by user */
 
+/* External declarations for the interrupt handlers used by the application. */
+extern void ADC14_IRQHandler(void);
+/* To be added by user */
 
 /* Intrrupt vector table.  Note that the proper constructs must be placed on this to  */
 /* ensure that it ends up at physical address 0x0000.0000 or at the start of          */
@@ -109,7 +112,7 @@ void (* const interruptVectors[])(void) =
     defaultISR,                             /* EUSCIB1 ISR               */
     defaultISR,                             /* EUSCIB2 ISR               */
     defaultISR,                             /* EUSCIB3 ISR               */
-    defaultISR,                             /* ADC14 ISR                 */
+	ADC14_IRQHandler,                       /* ADC14 ISR                 */
     defaultISR,                             /* T32_INT1 ISR              */
     defaultISR,                             /* T32_INT2 ISR              */
     defaultISR,                             /* T32_INTC ISR              */
