@@ -68,6 +68,8 @@ main.obj: ../device.h
 main.obj: ../netcfg.h
 main.obj: ../wlan_rx_filters.h
 main.obj: ../sl_common.h
+main.obj: ../lcd_display.h
+main.obj: ../ped_adc.h
 main.obj: ../events.h
 main.obj: ../myinit.h
 main.obj: ../MQTTClient.h
@@ -152,6 +154,8 @@ main.obj: ../MQTTCC3100.h
 ../netcfg.h: 
 ../wlan_rx_filters.h: 
 ../sl_common.h: 
+../lcd_display.h: 
+../ped_adc.h: 
 ../events.h: 
 ../myinit.h: 
 ../MQTTClient.h: 

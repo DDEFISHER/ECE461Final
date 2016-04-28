@@ -69,6 +69,8 @@ events.obj: ../device.h
 events.obj: ../netcfg.h
 events.obj: ../wlan_rx_filters.h
 events.obj: ../sl_common.h
+events.obj: ../lcd_display.h
+events.obj: ../ped_adc.h
 
 ../events.c: 
 ../events.h: 
@@ -139,3 +141,5 @@ events.obj: ../sl_common.h
 ../netcfg.h: 
 ../wlan_rx_filters.h: 
 ../sl_common.h: 
+../lcd_display.h: 
+../ped_adc.h: 

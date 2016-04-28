@@ -83,7 +83,7 @@ Fd_t spi_Open(char *ifName, unsigned long flags)
 
 
     /* Set SPI clock */
-    UCB0BR0 = 0x08; /* f_UCxCLK = 25MHz/2 */
+    UCB0BR0 = 0x02; /* f_UCxCLK = 25MHz/2 */
     UCB0BR1 = 0;
     // previously UCB0CTL1 &= ~UCSWRST;
     UCB0CTLW0 &= ~UCSWRST;

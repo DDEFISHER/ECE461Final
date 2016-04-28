@@ -79,6 +79,10 @@ Client hMQTTClient;     // MQTT Client
 int main(int argc, char** argv)
 {
 
+    /* Stop WDT and initialize lcd, clcks, main interfaces */
+    stopWDT();
+    init_lcd();
+    initClk();
     init_main();
 
     mqtt_subscribe();
@@ -263,6 +267,8 @@ void messageArrived(MessageData* data) {
     char *tok;
     long color;
 
+    write_lcd();
+    while(1);
     // Check for buffer overflow
     if (data->topicName->lenstring.len >= BUFF_SIZE) {
 //      UART_PRINT("Topic name too long!\n\r");

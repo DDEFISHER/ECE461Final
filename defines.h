@@ -15,6 +15,9 @@
 #include "driverlib.h"
 #include "simplelink.h"
 #include "sl_common.h"
+//helper files for lcd and adc
+#include "lcd_display.h"
+#include "ped_adc.h"
 
 #define APPLICATION_VERSION "1.0.0"
 

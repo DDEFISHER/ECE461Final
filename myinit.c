@@ -220,9 +220,6 @@ int init_main() {
     retVal = initializeAppVariables();
     ASSERT_ON_ERROR(retVal);
 
-    /* Stop WDT and initialize the system-clock of the MCU */
-    stopWDT();
-    initClk();
 
     /* GPIO Setup for Pins 2.0-2.2 */
     MAP_PMAP_configurePorts((const uint8_t *) port_mapping, P2MAP, 1,

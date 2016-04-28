@@ -69,6 +69,8 @@ myinit.obj: ../device.h
 myinit.obj: ../netcfg.h
 myinit.obj: ../wlan_rx_filters.h
 myinit.obj: ../sl_common.h
+myinit.obj: ../lcd_display.h
+myinit.obj: ../ped_adc.h
 
 ../myinit.c: 
 ../myinit.h: 
@@ -139,3 +141,5 @@ myinit.obj: ../sl_common.h
 ../netcfg.h: 
 ../wlan_rx_filters.h: 
 ../sl_common.h: 
+../lcd_display.h: 
+../ped_adc.h: 
