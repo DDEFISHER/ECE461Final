@@ -15,7 +15,6 @@ Graphics_Context g_sContext;
 void init_lcd()
 {
     //set up clocks for lcd
-    init_clocks();
     /* Initializes display */
     Crystalfontz128x128_Init();
 
@@ -127,4 +126,12 @@ int string_to_int(int8_t s[]) {
       index--;
   }
   return final;
+}
+void backlight_on() {
+
+  Graphics_clearDisplay(&g_sContext);
+  P2OUT |= BIT6;//turn on red rgb
+}
+void backlight_off() {
+  P2OUT &= ~BIT6;//turn off red rgb
 }

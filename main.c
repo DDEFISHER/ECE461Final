@@ -81,9 +81,16 @@ int main(int argc, char** argv)
 
     /* Stop WDT and initialize lcd, clcks, main interfaces */
     stopWDT();
+    init_clocks(); //init clock for LCD
     init_lcd();
-    initClk();
+    initClk(); //init clock for wifi
     init_main();
+    backlight_on();
+    //EUSCI_B_SPI_disable(EUSCI_B0_BASE);
+
+    Delay(500);
+
+    backlight_off();
 
     mqtt_subscribe();
     while(1){

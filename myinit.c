@@ -239,19 +239,27 @@ int init_main() {
     GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
 
     /* Configure TimerA0 for RGB LED*/
-    TA0CCR0 = PWM_PERIOD;                   // PWM Period
-    TA0CCTL1 = OUTMOD_7;                    // CCR1 reset/set
-    TA0CCR1 = PWM_PERIOD * (0/255);                 // CCR1 PWM duty cycle
-    TA0CCTL2 = OUTMOD_7;                    // CCR2 reset/set
-    TA0CCR2 = PWM_PERIOD * (0/255);                 // CCR2 PWM duty cycle
-    TA0CCTL3 = OUTMOD_7;                    // CCR3 reset/set
-    TA0CCR3 = PWM_PERIOD * (0/255);                 // CCR3 PWM duty cycle
-    TA0CTL = TASSEL__SMCLK | MC__UP | TACLR;  // SMCLK, up mode, clear TAR
+    //TA0CCR0 = PWM_PERIOD;                   // PWM Period
+    //TA0CCTL1 = OUTMOD_7;                    // CCR1 reset/set
+    //TA0CCR1 = PWM_PERIOD * (0/255);                 // CCR1 PWM duty cycle
+    //TA0CCTL2 = OUTMOD_7;                    // CCR2 reset/set
+    //TA0CCR2 = PWM_PERIOD * (0/255);                 // CCR2 PWM duty cycle
+    //TA0CCTL3 = OUTMOD_7;                    // CCR3 reset/set
+    //TA0CCR3 = PWM_PERIOD * (0/255);                 // CCR3 PWM duty cycle
+    //TA0CTL = TASSEL__SMCLK | MC__UP | TACLR;  // SMCLK, up mode, clear TAR
+
+    //set up RGB red and green
+    P2OUT &= ~BIT6;     //start green on red off
+    P2OUT &= ~BIT4;
+
+    P2DIR |= BIT6;			// make P2.6 an output - rgb red
+
+    P2DIR |= BIT4;			// make P2.4 an output - rgb green
 
     /* Configuring TimerA1 for Up Mode */
-    Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
+    //Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
 
-    Interrupt_enableInterrupt(INT_TA1_0);
+    //Interrupt_enableInterrupt(INT_TA1_0);
     Interrupt_enableInterrupt(INT_PORT1);
     Interrupt_enableMaster();
 
