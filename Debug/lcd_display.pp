@@ -49,6 +49,7 @@ lcd_display.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP4
 lcd_display.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/uart.h
 lcd_display.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h
 lcd_display.obj: ../grlib.h
+lcd_display.obj: ../lcd_display.h
 
 ../lcd_display.c: 
 ../grlib.h: 
@@ -99,3 +100,4 @@ lcd_display.obj: ../grlib.h
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/uart.h: 
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h: 
 ../grlib.h: 
+../lcd_display.h: 

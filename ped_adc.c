@@ -9,6 +9,24 @@
 #include "driverlib.h"
 #include "msp.h"
 
+extern int steps_taken;
+int old_diffs_x[50];
+int old_diffs_y[50];
+int old_diffs_z[50];
+
+int old_x = 0;
+int old_y = 0;
+int old_z = 0;
+
+int new_x = 0;
+int new_y = 0;
+int new_z = 0;
+
+int average_x = 0;
+int average_y = 0;
+int average_z = 0;
+int counter = 0;
+int loop_index = 0;
 //init adc
 void init_adc()
 {
@@ -53,7 +71,76 @@ void init_adc()
     MAP_ADC14_enableConversion();
     MAP_ADC14_toggleConversionTrigger();
 }
-//init clocks
+
+void step_track_and_alert(int x, int y, int z) {
+
+
+
+
+      if((old_x - x) > 0 ) {
+
+        old_diffs_x[counter] = old_x - x;
+      } else {
+        old_diffs_x[counter] = x - old_x;
+      }
+      if((old_y - y) > 0 ) {
+
+        old_diffs_y[counter] = old_y - y;
+      } else {
+        old_diffs_x[counter] = y - old_y;
+      }
+      if((old_z - z) > 0 ) {
+
+        old_diffs_z[counter] = old_z - z;
+      } else {
+        old_diffs_z[counter] = z - old_z;
+      }
+
+      old_x = x;
+      old_y = y;
+      old_z = z;
+
+
+      counter++;
+
+      if(counter > 49) {
+
+          int sum_x = 0;
+          int sum_y = 0;
+          int sum_z = 0;
+
+          for(loop_index = 0; loop_index < counter; loop_index++) {
+
+            sum_x = sum_x + old_diffs_x[loop_index];
+
+          }
+          average_x = sum_x/(counter+1);
+
+          for(loop_index = 0; loop_index < counter; loop_index++) {
+
+            sum_y = sum_y + old_diffs_y[loop_index];
+
+          }
+
+          average_y = sum_y/(counter+1);
+
+          for(loop_index = 0; loop_index < counter; loop_index++) {
+
+            sum_z = sum_z + old_diffs_z[loop_index];
+
+          }
+
+          average_z = sum_z/(counter+1);
+
+          //convert ints to string to display
+          if(average_z > 20) {
+
+            steps_taken++;
+          }
+          //combine_ints_to_string(average_x, 0, 0, 15,step_string);
+          counter = 0;
+      }
+}
 void init_clocks()
 {
 	/* Initializes Clock System */
@@ -62,5 +149,3 @@ void init_clocks()
 	MAP_CS_initClockSignal((0x00000004), (0x00000003), (0x00000000)); // HSMCLK = DCO/1
 	MAP_CS_initClockSignal((0x00000008), (0x00000003), (0x00000000)); // SMCLK = DCO /1
 }
-
-

@@ -27,16 +27,10 @@ union
     _u32 demobuf[BUF_SIZE/4];
 } uBuf;
 
-/*
- * GLOBAL VARIABLES -- Start
- */
 /* Button debounce state variables */
 volatile unsigned int S1buttonDebounce = 0;
 volatile unsigned int S2buttonDebounce = 0;
 volatile int publishID = 1;
-
-unsigned char macAddressVal[SL_MAC_ADDR_LEN];
-unsigned char macAddressLen = SL_MAC_ADDR_LEN;
 
 _u32  g_Status = 0;
 
@@ -58,20 +52,13 @@ const uint8_t port_mapping[] =
 #define APPLICATION_VERSION "1.0.0"
 char uniqueID[9] = "cowcowcow";
 
-void mqtt_subscribe();
 void messageArrived(MessageData* data);
-void send_steps();
 
 Network n;
 Client hMQTTClient;     // MQTT Client
 
-
-
-
-/*
- * ASYNCHRONOUS EVENT HANDLERS -- End
- */
-
+int goal_steps = 0;
+int steps_taken = 0;
 
 /*
  * Application's entry point
@@ -118,124 +105,40 @@ int main(int argc, char** argv)
     }
 
     while(1) {
-        //TODO add real expression here
-        if(1) {
-            rc = MQTTYield(&hMQTTClient, 10);
-            if (rc != 0) {
-                CLI_Write(" MQTT failed to yield \n\r");
-                //LOOP_FOREVER();
-            }
+        MQTTYield(&hMQTTClient, 10);
 
-            if (publishID) {
-                int rc = 0;
-                MQTTMessage msg;
-                msg.dup = 0;
-                msg.id = 0;
-                msg.payload = uniqueID;
-                msg.payloadlen = 8;
-                msg.qos = QOS0;
-                msg.retained = 0;
-                rc = MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
+        if( (P3IN & BIT5) == 0) {
+            MQTTMessage msg;
+            msg.dup = 0;
+            msg.id = 0;
+            msg.payload = uniqueID;
+            msg.payloadlen = 8;
+            msg.qos = QOS0;
+            msg.retained = 0;
+            MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
 
-                if (rc != 0) {
-                    CLI_Write(" Failed to publish unique ID to MQTT broker \n\r");
-                    //LOOP_FOREVER();
-                }
-                CLI_Write(" Published unique ID successfully \n\r");
-
-                publishID = 1;
-            }
-            Delay(10);
+            Delay(20);
+        } else if ( (P1IN & BIT4) == 0) {
+            backlight_on();
+            Delay(200);
+            backlight_off();
         }
-   }
+    }
 }
 
 void PORT1_IRQHandler(void)
 {
     uint32_t status = GPIO_getEnabledInterruptStatus(GPIO_PORT_P1);
     GPIO_clearInterruptFlag(GPIO_PORT_P1, status);
-
-    if (status & GPIO_PIN1)
-    {
-        if (S1buttonDebounce == 0)
-        {
-            S1buttonDebounce = 1;
-
-            GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-
-            // Publish the unique ID
-            publishID = 1;
-
-            MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
-        }
-    }
-    if (status & GPIO_PIN4)
-    {
-        if (S2buttonDebounce == 0)
-        {
-            S2buttonDebounce = 1;
-
-
-            MAP_Timer_A_startCounter(TIMER_A1_BASE, TIMER_A_UP_MODE);
-        }
-    }
 }
 
 void TA1_0_IRQHandler(void)
 {
     GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-    if (P1IN & GPIO_PIN1)
-    {
-        S1buttonDebounce = 0;
-    }
-    if (P1IN & GPIO_PIN4)
-    {
-        S2buttonDebounce = 0;
-    }
 
-    if ((P1IN & GPIO_PIN1) && (P1IN & GPIO_PIN4))
-    {
-        Timer_A_stopTimer(TIMER_A1_BASE);
-    }
+
     MAP_Timer_A_clearCaptureCompareInterrupt(TIMER_A1_BASE,
                 TIMER_A_CAPTURECOMPARE_REGISTER_0);
-}
-
-void mqtt_subscribe() {
-
-
-}
-void send_steps() {
-    //while(1){
-        int rc = MQTTYield(&hMQTTClient, 10);
-        if (rc != 0) {
-            CLI_Write(" MQTT failed to yield \n\r");
-            //LOOP_FOREVER();
-        }
-
-        publishID = 1;
-        if (publishID) {
-            int rc = 0;
-            MQTTMessage msg;
-            msg.dup = 0;
-            msg.id = 0;
-            msg.payload = "step123";
-            msg.payloadlen = 8;
-            msg.qos = QOS0;
-            msg.retained = 0;
-            rc = MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
-
-            if (rc != 0) {
-                CLI_Write(" Failed to publish unique ID to MQTT broker \n\r");
-                //LOOP_FOREVER();
-            }
-            CLI_Write(" Published unique ID successfully \n\r");
-
-            publishID = 0;
-        }
-
-        Delay(10);
-   // }
 }
 //****************************************************************************
 //
@@ -297,20 +200,14 @@ void ADC14_IRQHandler(void)
     //adc_message.y = 0;
     //adc_message.z = 0;
 
-    MAP_Interrupt_disableInterrupt(INT_ADC14);
     status = MAP_ADC14_getEnabledInterruptStatus();
     MAP_ADC14_clearInterruptFlag(status);
 
     /* ADC_MEM2 conversion completed */
     if(status & ((uint32_t)0x00000004))
     {
-        /* Store ADC14 conversion results */
-        //adc_message.x = ADC14_getResult(ADC_MEM0);
-        //adc_message.y = ADC14_getResult(ADC_MEM1);
-        //adc_message.z = ADC14_getResult(ADC_MEM2);
-
-        //Mailbox_post(ADC_Mbx, &adc_message, BIOS_WAIT_FOREVER);
-        P1OUT ^= BIT1;
-
+        step_track_and_alert(ADC14_getResult(ADC_MEM0),
+                             ADC14_getResult(ADC_MEM1),
+                             ADC14_getResult(ADC_MEM2));
     }
 }

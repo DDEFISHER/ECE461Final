@@ -228,25 +228,6 @@ int init_main() {
     MAP_GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2,
         GPIO_PIN0 | GPIO_PIN1 | GPIO_PIN2, GPIO_PRIMARY_MODULE_FUNCTION);
 
-    /* Confinguring P1.1 & P1.4 as an input and enabling interrupts */
-    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_enableInterrupt(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-    GPIO_interruptEdgeSelect(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4, GPIO_HIGH_TO_LOW_TRANSITION);
-    GPIO_clearInterruptFlag(GPIO_PORT_P1, GPIO_PIN1 | GPIO_PIN4);
-
-    GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-    GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-
-    /* Configure TimerA0 for RGB LED*/
-    //TA0CCR0 = PWM_PERIOD;                   // PWM Period
-    //TA0CCTL1 = OUTMOD_7;                    // CCR1 reset/set
-    //TA0CCR1 = PWM_PERIOD * (0/255);                 // CCR1 PWM duty cycle
-    //TA0CCTL2 = OUTMOD_7;                    // CCR2 reset/set
-    //TA0CCR2 = PWM_PERIOD * (0/255);                 // CCR2 PWM duty cycle
-    //TA0CCTL3 = OUTMOD_7;                    // CCR3 reset/set
-    //TA0CCR3 = PWM_PERIOD * (0/255);                 // CCR3 PWM duty cycle
-    //TA0CTL = TASSEL__SMCLK | MC__UP | TACLR;  // SMCLK, up mode, clear TAR
 
     //set up RGB red and green
     P2OUT &= ~BIT6;     //start green on red off
@@ -297,6 +278,16 @@ int init_main() {
 
     /* Configure command line interface */
     CLI_Configure();
+
+    //set up switch 1
+    P3DIR &= ~BIT5;			// make P1.1 and input
+    P3REN |= BIT5;			// enable pull resistor on P1.1
+    P3OUT |= BIT5;			// make it a pull-up resistor
+
+    //set up switch 2
+    P1DIR &= ~BIT4;			// make P1.4 and input
+    P1REN |= BIT4;			// enable pull resistor on P1.4
+    P1OUT |= BIT4;			// make it a pull-up resistor
 
     /*
      * Following function configures the device to default state by cleaning
@@ -357,6 +348,11 @@ int init_main() {
     /* Triggering the start of the sample */
     MAP_ADC14_enableConversion();
     MAP_ADC14_toggleConversionTrigger();
+
+    //set up switch 2
+    //P1DIR &= ~BIT1;			// make P1.4 and input
+    //P1REN |= BIT1;			// enable pull resistor on P1.4
+    //P1OUT |= BIT1;			// make it a pull-up resistor
 
     return 1;
 }
