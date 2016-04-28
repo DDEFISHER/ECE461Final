@@ -10,9 +10,9 @@
 #include "msp.h"
 
 extern int steps_taken;
-int old_diffs_x[50];
-int old_diffs_y[50];
-int old_diffs_z[50];
+int old_diffs_x[400];
+int old_diffs_y[400];
+int old_diffs_z[400];
 
 int old_x = 0;
 int old_y = 0;
@@ -74,9 +74,6 @@ void init_adc()
 
 void step_track_and_alert(int x, int y, int z) {
 
-
-
-
       if((old_x - x) > 0 ) {
 
         old_diffs_x[counter] = old_x - x;
@@ -103,7 +100,7 @@ void step_track_and_alert(int x, int y, int z) {
 
       counter++;
 
-      if(counter > 49) {
+      if(counter > 399) {
 
           int sum_x = 0;
           int sum_y = 0;
@@ -133,7 +130,7 @@ void step_track_and_alert(int x, int y, int z) {
           average_z = sum_z/(counter+1);
 
           //convert ints to string to display
-          if(average_z > 20) {
+          if(average_z > 15) {
 
             steps_taken++;
           }

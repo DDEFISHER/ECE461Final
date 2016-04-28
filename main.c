@@ -60,6 +60,7 @@ Client hMQTTClient;     // MQTT Client
 int goal_steps = 0;
 int steps_taken = 0;
 
+int menu_state = 0;
 /*
  * Application's entry point
  */
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
     MQTTClient(&hMQTTClient, &n, 1000, buf, 100, readbuf, 100);
     MQTTPacket_connectData cdata = MQTTPacket_connectData_initializer;
     cdata.MQTTVersion = 3;
-    cdata.clientID.cstring = uniqueID;
+    cdata.clientID.cstring = "daniel";
     rc = MQTTConnect(&hMQTTClient, &cdata);
 
     if (rc != 0) {
@@ -111,7 +112,7 @@ int main(int argc, char** argv)
             MQTTMessage msg;
             msg.dup = 0;
             msg.id = 0;
-            msg.payload = uniqueID;
+            msg.payload = "daniel";
             msg.payloadlen = 8;
             msg.qos = QOS0;
             msg.retained = 0;
@@ -156,6 +157,7 @@ void messageArrived(MessageData* data) {
     long color;
 
     backlight_on();
+    show_steps();
     Delay(200);
     backlight_off();
     // Check for buffer overflow
@@ -210,4 +212,29 @@ void ADC14_IRQHandler(void)
                              ADC14_getResult(ADC_MEM1),
                              ADC14_getResult(ADC_MEM2));
     }
+}
+
+void menu() {
+
+  if(menu_state == 1) {
+    menu_1();
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  } else if (menu_state == 2) {
+
+  }
+
 }

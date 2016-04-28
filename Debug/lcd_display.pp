@@ -50,6 +50,8 @@ lcd_display.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP4
 lcd_display.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h
 lcd_display.obj: ../grlib.h
 lcd_display.obj: ../lcd_display.h
+lcd_display.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
+lcd_display.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h
 
 ../lcd_display.c: 
 ../grlib.h: 
@@ -101,3 +103,5 @@ lcd_display.obj: ../lcd_display.h
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h: 
 ../grlib.h: 
 ../lcd_display.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h: 

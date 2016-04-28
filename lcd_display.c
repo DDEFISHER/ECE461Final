@@ -8,7 +8,7 @@
 #include "grlib.h"
 #include "Crystalfontz128x128_ST7735.h"
 #include "lcd_display.h"
-//#include <stdio.h>
+#include <stdio.h>
 
 /* Graphic library context */
 Graphics_Context g_sContext;
@@ -36,11 +36,11 @@ void init_lcd()
 
 }
 //write what ever buffer is passed to this function to lcd
-void write_lcd()
+void write_buff_to_lcd(int8_t buff[])
 {
     Graphics_clearDisplay(&g_sContext);
     Graphics_drawStringCentered(&g_sContext,
-                                    "Project 4",
+                                     buff,
                                      AUTO_STRING_LENGTH,
                                      64,
                                      10,
@@ -49,7 +49,7 @@ void write_lcd()
 }
 void show_steps() {
 
-    //sprintf(step_string, "%d", steps_taken);
+    sprintf(step_string, "%d", steps_taken);
     Graphics_drawStringCentered(&g_sContext,
                                 "                ",
                                 AUTO_STRING_LENGTH,
@@ -66,9 +66,37 @@ void show_steps() {
 void backlight_on() {
 
   Graphics_clearDisplay(&g_sContext);
-  show_steps();
   P2OUT |= BIT6;//turn on red rgb
 }
 void backlight_off() {
   P2OUT &= ~BIT6;//turn off red rgb
+}
+void menu1()
+{
+    backlight_on();
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Deactivate",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activate",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Set goal",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "View activity level",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     40,
+                                     OPAQUE_TEXT);
 }
