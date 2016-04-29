@@ -47,9 +47,9 @@ void menu_select();
 void load_data();
 
 //stuff for mqtt
-#define MQTT_BROKER_SERVER  "192.168.1.88"
-#define SUBSCRIBE_TOPIC "goal"
-#define PUBLISH_TOPIC "step"
+#define MQTT_BROKER_SERVER  "iot.eclipse.org"
+#define SUBSCRIBE_TOPIC "defi"
+#define PUBLISH_TOPIC "dedefishstep"
 #define START 0x0003F000
 #define START2 0x0003F004
 
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
         //LOOP_FOREVER();
     }
 
-    rc = MQTTSubscribe(&hMQTTClient, "goal", QOS0, messageArrived);
+    rc = MQTTSubscribe(&hMQTTClient, SUBSCRIBE_TOPIC, QOS0, messageArrived);
 
     if (rc != 0) {
         CLI_Write(" Failed to subscribe to /msp/cc3100/demo topic \n\r");
@@ -130,7 +130,7 @@ int main(int argc, char** argv)
     msg.payloadlen = 8;
     msg.qos = QOS0;
     msg.retained = 0;
-    MQTTPublish(&hMQTTClient, "on", &msg);
+    MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
     Delay(20);
 
     backlight_off();
@@ -160,7 +160,7 @@ int main(int argc, char** argv)
             msg.payloadlen = 2;
             msg.qos = QOS0;
             msg.retained = 0;
-            MQTTPublish(&hMQTTClient, "on", &msg);
+            MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
             Delay(20);
             send_on_bool = 0;
         } else if( (P3IN & BIT5) == 0 && debounce > 20) {
