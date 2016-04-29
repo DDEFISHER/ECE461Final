@@ -1,14 +1,27 @@
+//*****************************************************************************
+// Daniel DeFisher dedefish@ncsu.edu
+// MSP432 main.c - ECE461 project 4
+//          MSP432p401rpz                         WIFI CC3100
+//                 ---------------              ---------
+//                |               |            |          |--> wifi
+//                |               |            |          |
+//          SW1 --|P1.1  Master   |-->SPI -->  |slave     |
+//          SW2 --|P1.4      PJ.31|-->LCD       ----------
+//          ADC --|           P2.7|-->Buzzer
+//                |           P2.6|-->RGB RED
+//                |           P2.5|-->RGB BLUE
+//***********************************************************
+// Iot pedometer
+// Operations:
+// wait for it to boot up
+// user button 2 on msp432 to open and scroll in menus and button 2 on booster board to select while in menu
+// starts off in active mode
+// menu does everything
 #include "defines.h"
 #include "events.h"
 #include "myinit.h"
 #include "MQTTClient.h"
 #include <stdio.h>
-
-
-/*
- * Values for below macros shall be modified per the access-point's (AP) properties
- * SimpleLink device will connect to following AP when the application is executed
- */
 
 /* Application specific status/error codes */
 typedef enum{
@@ -65,6 +78,7 @@ void messageArrived(MessageData* data);
 Network n;
 Client hMQTTClient;     // MQTT Client
 
+//state machine globals
 int goal_steps = 10;
 int steps_taken = 0;
 int send_goal_bool = 0;
@@ -76,7 +90,8 @@ int debounce = 0;
 int menu_state = 0;
 int state2 = 0;
 /*
- * Application's entry point
+ * Application's entry point dynamic schedule.  Main is somewhat too large because of the MQTT stuff
+ * allmighty whileloop
  */
 int main(int argc, char** argv)
 {
@@ -251,6 +266,7 @@ void ADC14_IRQHandler(void)
     }
 }
 
+//open menu for user
 void menu() {
 
   if(menu_state == 0) {
@@ -286,6 +302,7 @@ void menu() {
   }
 
 }
+//select menu state machine
 void menu_select() {
 
   if(menu_state == 1) {
@@ -321,6 +338,7 @@ void menu_select() {
         backlight_off();
   }
 }
+//load data from flash
 void load_data() {
     
     int i = 0;
