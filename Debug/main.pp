@@ -85,6 +85,7 @@ main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include
 main.obj: ../MQTTPacket.h
 main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
 main.obj: ../MQTTCC3100.h
+main.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
 
 ../main.c: 
 ../defines.h: 
@@ -171,3 +172,4 @@ main.obj: ../MQTTCC3100.h
 ../MQTTPacket.h: 
 /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 
 ../MQTTCC3100.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 

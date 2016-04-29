@@ -2,6 +2,7 @@
 #include "events.h"
 #include "myinit.h"
 #include "MQTTClient.h"
+#include <stdio.h>
 
 
 /*
@@ -42,6 +43,7 @@ const uint8_t port_mapping[] =
 };
 
 void menu();
+void menu_select();
 
 //stuff for mqtt
 #define MQTT_BROKER_SERVER  "192.168.1.88"
@@ -60,10 +62,14 @@ void messageArrived(MessageData* data);
 Network n;
 Client hMQTTClient;     // MQTT Client
 
-int goal_steps = 0;
+int goal_steps = 50;
 int steps_taken = 0;
+int send_goal_bool = 0;
+
+int debounce = 0;
 
 int menu_state = 0;
+int state2 = 0;
 /*
  * Application's entry point
  */
@@ -108,21 +114,41 @@ int main(int argc, char** argv)
         //LOOP_FOREVER();
     }
 
+    MQTTYield(&hMQTTClient, 10);
+    int8_t buffer[15] = "               ";
+    sprintf(buffer, "%d", goal_steps);
+    MQTTMessage msg;
+    msg.dup = 0;
+    msg.id = 0;
+    msg.payload = buffer;
+    msg.payloadlen = 8;
+    msg.qos = QOS0;
+    msg.retained = 0;
+    MQTTPublish(&hMQTTClient, "test", &msg);
+    Delay(20);
+
     while(1) {
         MQTTYield(&hMQTTClient, 10);
+        debounce++;
 
-        if( (P3IN & BIT5) == 0) {
-            MQTTMessage msg;
+        if(send_goal_bool) {
+            buffer[15] = "               ";
+            sprintf(buffer, "%d", goal_steps);
+            msg;
             msg.dup = 0;
             msg.id = 0;
-            msg.payload = "daniel";
+            msg.payload = buffer;
             msg.payloadlen = 8;
             msg.qos = QOS0;
             msg.retained = 0;
             MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
-
             Delay(20);
-        } else if ( (P1IN & BIT4) == 0) {
+            send_goal_bool = 0;
+        } else if( (P3IN & BIT5) == 0 && debounce > 30) {
+          debounce = 0;
+          menu_select();
+        } else if ( (P1IN & BIT4) == 0 && debounce > 20) {
+          debounce = 0;
           menu();
         }
     }
@@ -219,6 +245,7 @@ void menu() {
 
   if(menu_state == 0) {
     menu1();
+    state2 = 0;
     menu_state++;
   } else if (menu_state == 1) {
     menu2();
@@ -229,16 +256,46 @@ void menu() {
   } else if (menu_state == 3) {
     menu4();
     menu_state = 0;
-  } else if (menu_state == 3) {
+    state2 = 4;
+  } else if (menu_state == 4) {
 
-  } else if (menu_state == 2) {
+  } else if (menu_state == 5) {
+    goal_steps+= 50;
+    set_goal_menu1();
 
-  } else if (menu_state == 2) {
+  } else if (menu_state == 6) {
 
-  } else if (menu_state == 2) {
+    //on activity menu
+    menu_state = 0;
+    backlight_off();
 
-  } else if (menu_state == 2) {
+  } else if (menu_state == 7) {
+
+  } else if (menu_state == 4) {
 
   }
 
+}
+void menu_select() {
+
+  if(menu_state == 0 && !state2) {
+
+  } else if (menu_state == 1) {
+
+  } else if (menu_state == 3) {
+    goal_steps = 50;
+    set_goal_menu1();
+    menu_state = 5;
+  } else if (state2) {
+    view_activity_menu();
+    state2 = 0;
+    menu_state = 6;
+  } else if (menu_state == 5) {
+    send_goal_bool = 1;
+    menu_state = 0;
+    backlight_off();
+  } else if (menu_state == 6) {
+    menu_state = 0;
+    backlight_off();
+  }
 }

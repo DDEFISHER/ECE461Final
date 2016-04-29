@@ -21,5 +21,7 @@ void menu1();
 void menu2();
 void menu3();
 void menu4();
+void set_goal_menu1();
+void view_activity_menu();
 
 #endif /* LCD_DISPLAY_H_ */

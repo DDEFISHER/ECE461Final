@@ -187,3 +187,80 @@ void menu4()
                                      40,
                                      OPAQUE_TEXT);
 }
+void set_goal_menu1() {
+    backlight_on();
+    int8_t buffer[15] = "               ";
+    sprintf(buffer, "%d", goal_steps);
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Set goal",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     buffer,
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+}
+void view_activity_menu() {
+    backlight_on();
+    int8_t buffer1[15] = "               ";
+    sprintf(buffer1, "%d", goal_steps);
+    Graphics_clearDisplay(&g_sContext);
+    int8_t buffer2[15] = "               ";
+    sprintf(buffer2, "%d", steps_taken);
+    int8_t buffer3[15] = "               ";
+    sprintf(buffer3, "%d", (steps_taken*100)/goal_steps);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Step activity",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "taken / goal",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     buffer2,
+                                     AUTO_STRING_LENGTH,
+                                     24,
+                                     40,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "/",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     40,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     buffer1,
+                                     AUTO_STRING_LENGTH,
+                                     94,
+                                     40,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "percent",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     60,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     buffer3,
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     70,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Exit <-",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     80,
+                                     OPAQUE_TEXT);
+
+}
