@@ -13,5 +13,6 @@ void init_clocks();
 void show_adc14_info();
 void ADC14_IRQHandler();
 void step_track_and_alert(int, int, int);
+void write(int steps);
 
 #endif /* PED_ADC_H_ */

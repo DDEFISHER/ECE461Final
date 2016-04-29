@@ -7,9 +7,14 @@
 
 /* TI-RTOS Header files */
 #include "driverlib.h"
+#include "ped_adc.h"
 #include "msp.h"
+#include <stdio.h>
 
+#define START  0x0003F000
+#define START2 0x0003F004
 extern int steps_taken;
+extern int goal_steps;
 int old_diffs_x[400];
 int old_diffs_y[400];
 int old_diffs_z[400];
@@ -130,9 +135,10 @@ void step_track_and_alert(int x, int y, int z) {
           average_z = sum_z/(counter+1);
 
           //convert ints to string to display
-          if(average_z > 15) {
+          if(average_z > 20) {
 
             steps_taken++;
+            write(steps_taken);
           }
           //combine_ints_to_string(average_x, 0, 0, 15,step_string);
           counter = 0;
@@ -145,4 +151,33 @@ void init_clocks()
 	MAP_CS_initClockSignal((0x00000002), (0x00000003), (0x00000000)); // MCLK = DCO /1
 	MAP_CS_initClockSignal((0x00000004), (0x00000003), (0x00000000)); // HSMCLK = DCO/1
 	MAP_CS_initClockSignal((0x00000008), (0x00000003), (0x00000000)); // SMCLK = DCO /1
+}
+void write(int steps) {
+
+    uint8_t write_data[4] = "pppp";
+    sprintf(write_data, "%d", steps);
+    uint8_t write_data2[4] = "pppp";
+    sprintf(write_data2, "%d", goal_steps);
+    MAP_FlashCtl_unprotectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,FLASH_SECTOR31);
+
+    /* Trying to erase the sector. Within this function, the API will
+        automatically try to erase the maximum number of tries. If it fails,
+         trap in an infinite loop */
+    if(!MAP_FlashCtl_eraseSector(START))
+        while(1);
+
+    /* Trying to program the memory. Within this function, the API will 
+        automatically try to program the maximum number of tries. If it fails,
+        trap inside an infinite loop */
+    if(!MAP_FlashCtl_programMemory(write_data,
+            (void*) START, 4))
+                while(1);
+    if(!MAP_FlashCtl_programMemory(write_data2,
+            (void*) START2, 4))
+                while(1);
+
+    /* Setting the sector back to protected  */
+    MAP_FlashCtl_protectSector(FLASH_MAIN_MEMORY_SPACE_BANK1,FLASH_SECTOR31);
+
+
 }

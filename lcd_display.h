@@ -23,5 +23,7 @@ void menu3();
 void menu4();
 void set_goal_menu1();
 void view_activity_menu();
+void write_buff_to_lcd(int8_t buff[]);
+void view_goal_menu();
 
 #endif /* LCD_DISPLAY_H_ */

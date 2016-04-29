@@ -44,11 +44,14 @@ const uint8_t port_mapping[] =
 
 void menu();
 void menu_select();
+void load_data();
 
 //stuff for mqtt
 #define MQTT_BROKER_SERVER  "192.168.1.88"
 #define SUBSCRIBE_TOPIC "goal"
 #define PUBLISH_TOPIC "step"
+#define START 0x0003F000
+#define START2 0x0003F004
 
 // MQTT message buffer size
 #define BUFF_SIZE 32
@@ -62,9 +65,11 @@ void messageArrived(MessageData* data);
 Network n;
 Client hMQTTClient;     // MQTT Client
 
-int goal_steps = 50;
+int goal_steps = 10;
 int steps_taken = 0;
 int send_goal_bool = 0;
+int send_on_bool = 0;
+int active_bool = 1;
 
 int debounce = 0;
 
@@ -81,9 +86,11 @@ int main(int argc, char** argv)
     init_clocks(); //init clock for LCD
     init_lcd();
     initClk(); //init clock for wifi
-    Delay(10);
+    Delay(5);
     init_main();
-    Delay(10);
+    Delay(5);
+
+    load_data();
 
     int rc = 0;
     unsigned char buf[100];
@@ -107,7 +114,7 @@ int main(int argc, char** argv)
         //LOOP_FOREVER();
     }
 
-    rc = MQTTSubscribe(&hMQTTClient, "test", QOS0, messageArrived);
+    rc = MQTTSubscribe(&hMQTTClient, "goal", QOS0, messageArrived);
 
     if (rc != 0) {
         CLI_Write(" Failed to subscribe to /msp/cc3100/demo topic \n\r");
@@ -115,8 +122,7 @@ int main(int argc, char** argv)
     }
 
     MQTTYield(&hMQTTClient, 10);
-    int8_t buffer[15] = "               ";
-    sprintf(buffer, "%d", goal_steps);
+    int8_t buffer[2] = "on";
     MQTTMessage msg;
     msg.dup = 0;
     msg.id = 0;
@@ -124,32 +130,60 @@ int main(int argc, char** argv)
     msg.payloadlen = 8;
     msg.qos = QOS0;
     msg.retained = 0;
-    MQTTPublish(&hMQTTClient, "test", &msg);
+    MQTTPublish(&hMQTTClient, "on", &msg);
     Delay(20);
 
+    backlight_off();
     while(1) {
         MQTTYield(&hMQTTClient, 10);
         debounce++;
 
         if(send_goal_bool) {
-            buffer[15] = "               ";
-            sprintf(buffer, "%d", goal_steps);
+            int8_t buffer2[15] = "               ";
+            sprintf(buffer2, "%d", goal_steps);
             msg;
             msg.dup = 0;
             msg.id = 0;
-            msg.payload = buffer;
-            msg.payloadlen = 8;
+            msg.payload = buffer2;
+            msg.payloadlen = 15;
             msg.qos = QOS0;
             msg.retained = 0;
             MQTTPublish(&hMQTTClient, PUBLISH_TOPIC, &msg);
             Delay(20);
             send_goal_bool = 0;
-        } else if( (P3IN & BIT5) == 0 && debounce > 30) {
+        }else if(send_on_bool) {
+            int8_t buffer2[2] = "on";
+            msg;
+            msg.dup = 0;
+            msg.id = 0;
+            msg.payload = buffer2;
+            msg.payloadlen = 2;
+            msg.qos = QOS0;
+            msg.retained = 0;
+            MQTTPublish(&hMQTTClient, "on", &msg);
+            Delay(20);
+            send_on_bool = 0;
+        } else if( (P3IN & BIT5) == 0 && debounce > 20) {
           debounce = 0;
           menu_select();
-        } else if ( (P1IN & BIT4) == 0 && debounce > 20) {
+        } else if ( (P1IN & BIT4) == 0 && debounce > 10) {
           debounce = 0;
           menu();
+        } else if ( steps_taken >= goal_steps && active_bool == 1 ) {
+          P1OUT &= ~BIT0;
+          int8_t buffer2[1] = "g";
+          msg;
+          msg.dup = 0;
+          msg.id = 0;
+          msg.payload = buffer2;
+          msg.payloadlen = 1;
+          msg.qos = QOS0;
+          msg.retained = 0;
+          MQTTPublish(&hMQTTClient, "on", &msg);
+          Delay(20);
+          MAP_Interrupt_disableInterrupt(INT_ADC14);
+          active_bool = 0;
+          view_goal_menu();
         }
     }
 }
@@ -178,44 +212,20 @@ void TA1_0_IRQHandler(void)
 //
 //****************************************************************************
 void messageArrived(MessageData* data) {
-    char buf[BUFF_SIZE];
 
-    char *tok;
-    long color;
 
-    backlight_on();
-    show_steps();
-    Delay(200);
-    backlight_off();
-    // Check for buffer overflow
-    if (data->topicName->lenstring.len >= BUFF_SIZE) {
-//      UART_PRINT("Topic name too long!\n\r");
-        return;
+    char num_string[4] = "    ";
+    num_string[0] = data->topicName->lenstring.data[4];
+    num_string[1] = data->topicName->lenstring.data[5];
+    num_string[2] = data->topicName->lenstring.data[6];
+    num_string[3] = data->topicName->lenstring.data[7];
+    int new_goal = 0;
+
+    sscanf(num_string, "%d", &new_goal);
+
+    if(new_goal > 0) {
+    goal_steps = new_goal;
     }
-    if (data->message->payloadlen >= BUFF_SIZE) {
-//      UART_PRINT("Payload too long!\n\r");
-        return;
-    }
-
-    strncpy(buf, data->topicName->lenstring.data,
-        min(BUFF_SIZE, data->topicName->lenstring.len));
-    buf[data->topicName->lenstring.len] = 0;
-
-
-
-    strncpy(buf, data->message->payload,
-        min(BUFF_SIZE, data->message->payloadlen));
-    buf[data->message->payloadlen] = 0;
-
-    tok = strtok(buf, " ");
-    color = strtol(tok, NULL, 10);
-    TA0CCR1 = PWM_PERIOD * (color/255.0);                 // CCR1 PWM duty cycle
-    tok = strtok(NULL, " ");
-    color = strtol(tok, NULL, 10);
-    TA0CCR2 = PWM_PERIOD * (color/255.0);                // CCR2 PWM duty cycle
-    tok = strtok(NULL, " ");
-    color = strtol(tok, NULL, 10);
-    TA0CCR3 = PWM_PERIOD * (color/255.0);                  // CCR3 PWM duty cycle
 
     return;
 }
@@ -260,7 +270,7 @@ void menu() {
   } else if (menu_state == 4) {
 
   } else if (menu_state == 5) {
-    goal_steps+= 50;
+    goal_steps+= 10;
     set_goal_menu1();
 
   } else if (menu_state == 6) {
@@ -278,24 +288,49 @@ void menu() {
 }
 void menu_select() {
 
-  if(menu_state == 0 && !state2) {
-
-  } else if (menu_state == 1) {
-
+  if(menu_state == 1) {
+        P1OUT &= ~BIT0;
+        send_on_bool = 1;
+        MAP_Interrupt_disableInterrupt(INT_ADC14);
+        active_bool = 0;
+        view_activity_menu();
+        state2 = 0;
+        menu_state = 6;
+  } else if (menu_state == 2) {
+        P1OUT |= BIT0;
+        send_on_bool = 1;
+        steps_taken = 0;
+        active_bool = 1;
+        MAP_Interrupt_enableInterrupt(INT_ADC14);
+        menu_state = 0;
+        backlight_off();
   } else if (menu_state == 3) {
-    goal_steps = 50;
-    set_goal_menu1();
-    menu_state = 5;
+        goal_steps = 10;
+        set_goal_menu1();
+        menu_state = 5;
   } else if (state2) {
-    view_activity_menu();
-    state2 = 0;
-    menu_state = 6;
+        view_activity_menu();
+        state2 = 0;
+        menu_state = 6;
   } else if (menu_state == 5) {
-    send_goal_bool = 1;
-    menu_state = 0;
-    backlight_off();
+        send_goal_bool = 1;
+        menu_state = 0;
+        backlight_off();
   } else if (menu_state == 6) {
-    menu_state = 0;
-    backlight_off();
+        menu_state = 0;
+        backlight_off();
   }
+}
+void load_data() {
+    
+    int i = 0;
+    uint8_t data[4];
+    for(i = 0; i < 4; i++) {
+        data[i] = *(uint8_t*)(i+START);
+    }
+    sscanf(data, "%d", &steps_taken);
+    for(i = 0; i < 4; i++) {
+        data[i] = *(uint8_t*)(i+START2);
+    }
+    sscanf(data, "%d", &goal_steps);
 }

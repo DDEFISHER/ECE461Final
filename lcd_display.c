@@ -264,3 +264,33 @@ void view_activity_menu() {
                                      OPAQUE_TEXT);
 
 }
+void view_goal_menu() {
+    backlight_on();
+    int8_t buffer1[15] = "               ";
+    sprintf(buffer1, "%d", goal_steps);
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Goal met",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     buffer1,
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "steps taken",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    TA0CCR0 = 410*3;                // Change PWM period to 3 times duty cycle
+    TA0CCR4 = TA0CCR0 / 2;
+    Delay(60);
+    TA0CCR0 = 1;                // Change PWM period to 1 for no sound
+    Delay(50);
+    backlight_off();
+}

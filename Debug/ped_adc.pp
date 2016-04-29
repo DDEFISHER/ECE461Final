@@ -45,6 +45,9 @@ ped_adc.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4
 ped_adc.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/timer_a.h
 ped_adc.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/uart.h
 ped_adc.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h
+ped_adc.obj: ../ped_adc.h
+ped_adc.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h
+ped_adc.obj: /home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h
 
 ../ped_adc.c: 
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/driverlib.h: 
@@ -91,3 +94,6 @@ ped_adc.obj: /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/timer_a.h: 
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/uart.h: 
 /home/daniel/Programs/ti/workspace2/final_ece461/driverlib/MSP432P4xx/wdt_a.h: 
+../ped_adc.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdio.h: 
+/home/daniel/Programs/ti/ccsv6/tools/compiler/ti-cgt-arm_5.2.6/include/stdarg.h: 

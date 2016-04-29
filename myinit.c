@@ -20,6 +20,19 @@ struct{
     _i16 SockID;
 }g_AppData;
 
+#define SMCLK_FREQUENCY     48000000
+#define SAMPLE_FREQUENCY    8000
+
+Timer_A_PWMConfig pwmConfig =
+{
+        TIMER_A_CLOCKSOURCE_SMCLK,
+        TIMER_A_CLOCKSOURCE_DIVIDER_1,
+        (SMCLK_FREQUENCY/SAMPLE_FREQUENCY),
+        TIMER_A_CAPTURECOMPARE_REGISTER_1,
+        TIMER_A_OUTPUTMODE_SET_RESET,
+        (SMCLK_FREQUENCY/SAMPLE_FREQUENCY)/2
+};
+
 typedef enum{
     DEVICE_NOT_IN_STATION_MODE = -0x7D0,        /* Choosing this number to avoid overlap with host-driver's error codes */
     HTTP_SEND_ERROR = DEVICE_NOT_IN_STATION_MODE - 1,
@@ -237,6 +250,11 @@ int init_main() {
 
     P2DIR |= BIT4;			// make P2.4 an output - rgb green
 
+    P1OUT |= BIT0;     //start green on red off
+
+    P1DIR |= BIT0;			// make P2.6 an output - rgb red
+
+
     /* Configuring TimerA1 for Up Mode */
     //Timer_A_configureUpMode(TIMER_A1_BASE, &upConfig);
 
@@ -353,6 +371,11 @@ int init_main() {
     //P1DIR &= ~BIT1;			// make P1.4 and input
     //P1REN |= BIT1;			// enable pull resistor on P1.4
     //P1OUT |= BIT1;			// make it a pull-up resistor
+    P2SEL0 |= BIT7;						    // Configure P2.7 as PWM out for buzzer
+    P2SEL1 &= ~BIT7;
+    P2DIR |= BIT7;
+    TA0CCTL4 = OUTMOD_7;                    // CCR1 reset/set
+    TA0CTL = TASSEL__SMCLK | MC__UP | TACLR;  // SMCLK, up mode, clear TAR
 
     return 1;
 }
