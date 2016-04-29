@@ -2,11 +2,30 @@
 <html>
 <head>
 <title>Iot interface</title>
+<script src="mqttws31.js"></script>
+<script type="text/javascript" src="index.js"></script>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+<h1>Iot interface</h1>
+ <form class="form-group">
+  Enter New Goal<br>
+  <input id="goal_id" class="form-control" type="text" name="" value="0"><br>
+  <button class="btn btn-primary" onclick="send_goal()">Submit</button> 
+</form> 
 
+<br>
+<br>
+
+<table id="table_id" class="table">
+  <tr>
+    <td>Time</td>
+    <td>Status</td>
+  </tr>
+</table>
+<button class="btn btn-success">Goal met</button> 
 </body>
 </html> 
