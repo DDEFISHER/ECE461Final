@@ -76,25 +76,112 @@ void menu1()
     backlight_on();
     Graphics_clearDisplay(&g_sContext);
     Graphics_drawStringCentered(&g_sContext,
-                                     "Deactivate",
+                                     "Deactivate <-    ",
                                      AUTO_STRING_LENGTH,
                                      64,
                                      10,
                                      OPAQUE_TEXT);
     Graphics_drawStringCentered(&g_sContext,
-                                     "Activate",
+                                     "Activate         ",
                                      AUTO_STRING_LENGTH,
                                      64,
                                      20,
                                      OPAQUE_TEXT);
     Graphics_drawStringCentered(&g_sContext,
-                                     "Set goal",
+                                     "Set goal         ",
                                      AUTO_STRING_LENGTH,
                                      64,
                                      30,
                                      OPAQUE_TEXT);
     Graphics_drawStringCentered(&g_sContext,
-                                     "View activity level",
+                                     "Activity level   ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     40,
+                                     OPAQUE_TEXT);
+}
+void menu2()
+{
+    backlight_on();
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Deactivate       ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activate <-      ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Set goal         ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activity level   ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     40,
+                                     OPAQUE_TEXT);
+}
+void menu3()
+{
+    backlight_on();
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Deactivate       ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activate         ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Set goal <-      ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activity level   ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     40,
+                                     OPAQUE_TEXT);
+}
+void menu4()
+{
+    backlight_on();
+    Graphics_clearDisplay(&g_sContext);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Deactivate       ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     10,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activate         ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     20,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Set goal         ",
+                                     AUTO_STRING_LENGTH,
+                                     64,
+                                     30,
+                                     OPAQUE_TEXT);
+    Graphics_drawStringCentered(&g_sContext,
+                                     "Activity level <-",
                                      AUTO_STRING_LENGTH,
                                      64,
                                      40,

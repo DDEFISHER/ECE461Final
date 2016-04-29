@@ -40,6 +40,9 @@ const uint8_t port_mapping[] =
     //Port P2:
     PM_TA0CCR1A, PM_TA0CCR2A, PM_TA0CCR3A, PM_NONE, PM_TA1CCR1A, PM_NONE, PM_NONE, PM_NONE
 };
+
+void menu();
+
 //stuff for mqtt
 #define MQTT_BROKER_SERVER  "192.168.1.88"
 #define SUBSCRIBE_TOPIC "goal"
@@ -120,9 +123,7 @@ int main(int argc, char** argv)
 
             Delay(20);
         } else if ( (P1IN & BIT4) == 0) {
-            backlight_on();
-            Delay(200);
-            backlight_off();
+          menu();
         }
     }
 }
@@ -216,16 +217,19 @@ void ADC14_IRQHandler(void)
 
 void menu() {
 
-  if(menu_state == 1) {
-    menu_1();
-
+  if(menu_state == 0) {
+    menu1();
+    menu_state++;
+  } else if (menu_state == 1) {
+    menu2();
+    menu_state++;
   } else if (menu_state == 2) {
-
-  } else if (menu_state == 2) {
-
-  } else if (menu_state == 2) {
-
-  } else if (menu_state == 2) {
+    menu3();
+    menu_state++;
+  } else if (menu_state == 3) {
+    menu4();
+    menu_state = 0;
+  } else if (menu_state == 3) {
 
   } else if (menu_state == 2) {
 
